@@ -2,13 +2,13 @@ import css from "./App.module.css";
 import SearchBox from "../SearchBox/SearchBox"
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { fetchNotes } from "../../services/noteService";
+import { fetchNotes, createNote } from "../../services/noteService";
 import { useDebouncedCallback } from 'use-debounce';
 import NoteList from "../NoteList/NoteList";
 import Pagination from "../Pagination/Pagination"
 import Modal from "../Modal/Modal";
 import NoteForm from "../NoteForm/NoteForm";
-import type { FormData } from '../../types/note';
+import type { FormData} from '../../types/note';
 
 
 export default function App() { 
@@ -27,10 +27,11 @@ export default function App() {
         setModalOpen(false);
     };
     const handleNoteSubmit = (values: FormData) => {
-        console.log('Нотатка створена:', values);
+        console.log('Нотатка створена:', values.content);
         setModalOpen(false);
+        createNote(values);
     };
-
+    
 
     const { data } = useQuery({
         queryKey: ["notes", searchValue, page],
@@ -50,7 +51,7 @@ export default function App() {
             {(data && data?.notes.length >= 1) && <NoteList notes={data?.notes} />}
             {isModalOpen && (
                 <Modal onClose={handleCloseModal}>
-                    <NoteForm onSubmit={handleNoteSubmit} />
+                    <NoteForm onSubmit={handleNoteSubmit} onClose={handleCloseModal} />
                 </Modal>
             )}
         </div>

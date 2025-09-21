@@ -6,6 +6,7 @@ import type { FormData } from '../../types/note';
 
 interface NoteFormProps {
     onSubmit: (values: FormData) => void;
+    onClose: () => void;
 }
 
 
@@ -33,7 +34,7 @@ const OrderSchema = Yup.object().shape({
 
 
 
-export default function NoteForm({ onSubmit }: NoteFormProps) {
+export default function NoteForm({ onSubmit, onClose }: NoteFormProps) {
     const handleSubmit = (
         values: FormData,
         formikHelpers: FormikHelpers<FormData>
@@ -48,7 +49,6 @@ export default function NoteForm({ onSubmit }: NoteFormProps) {
             onSubmit={handleSubmit}
             validationSchema={OrderSchema}
         >
-            return(
             <Form className={css.form}>
                 <fieldset className={css.formGroup}>
                     <label htmlFor="title">
@@ -105,7 +105,7 @@ export default function NoteForm({ onSubmit }: NoteFormProps) {
                     />
                 </fieldset>
                 <fieldset className={css.actions}>
-                    <button type="button" className={css.cancelButton}>
+                    <button type="button" onClick={onClose} className={css.cancelButton}>
                         Cancel
                     </button>
                     <button
@@ -117,7 +117,6 @@ export default function NoteForm({ onSubmit }: NoteFormProps) {
                     </button>
                 </fieldset>
             </Form>
-                )
         </Formik>
     )
 }
