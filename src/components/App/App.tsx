@@ -3,7 +3,7 @@ import SearchBox from "../SearchBox/SearchBox"
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { fetchNotes } from "../../services/noteService";
-import { useDebouncedCallback } from 'use-debounce';
+import { useDebounce } from 'use-debounce';
 import NoteList from "../NoteList/NoteList";
 import Pagination from "../Pagination/Pagination"
 import Modal from "../Modal/Modal";
@@ -16,13 +16,12 @@ export default function App() {
     const [page, setPage] = useState(1);
     const [isModalOpen, setModalOpen] = useState(false);
 
+    const [debouncedSearchValue] = useDebounce(searchValue, 300);
 
-    const updateSearchQuery = useDebouncedCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            setSearchValue(e.target.value);
+    const updateSearchQuery = ((value: string) => {
+            setSearchValue(value);
             setPage(1);
-        },
-        300
+        }
     );
     const handleCreateNote = () => {
         setModalOpen(true)
@@ -32,8 +31,8 @@ export default function App() {
     };
 
     const { data } = useQuery({
-        queryKey: ["notes", searchValue, page],
-        queryFn: () => fetchNotes(searchValue, page),
+        queryKey: ["notes", debouncedSearchValue, page],
+        queryFn: () => fetchNotes(debouncedSearchValue, page),
         placeholderData: keepPreviousData,
     });
 
